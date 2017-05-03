@@ -20,9 +20,16 @@ Pointer Allocator::alloc(size_t N) {
 
     // добавляем в конец списка
     if (last_node > static_cast<void*>(static_cast<char*>(root->last) + N + sizeof(point))){
-        last_node->next = last_node - 1; // добавили новый элемент
-        (last_node->next)->prev = last_node; // указатель на следующий из предыдущего = текущий 
-        last_node = last_node->next; // last_node = новый
+        root->next = last_node - 1;
+        last_node = root->next;
+
+        last_node->pred = root;
+
+
+
+        //last_node->next = last_node - 1; // добавили новый элемент
+        //(last_node->next)->prev = last_node; // указатель на следующий из предыдущего = текущий 
+        //last_node = last_node->next; // last_node = новый
         last_node->first = (last_node->prev)->last; // начало новой строки - конец предыдущей
         last_node->last = static_cast<void*>(static_cast<char*>(root->prev->last) + N); // конец строки
         last_node->next = nullptr; // следующего пока нет
