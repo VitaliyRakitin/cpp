@@ -23,17 +23,22 @@ Pointer Allocator::alloc(size_t N) {
         root->next = last_node - 1;
         last_node = root->next;
 
-        last_node->pred = root;
+        last_node->prev = root;
+        root = last_node;
+        root->first = root->prev->last;
+        root->last = static_cast<void*>(static_cast<char*>(root->prev->last) + N);
+        root->next = nullptr; // следующего пока нет
 
-
-
+        //root->next = last_node - 1;
+        //last_node = root->next;
+        //last_node->prev = root;
         //last_node->next = last_node - 1; // добавили новый элемент
         //(last_node->next)->prev = last_node; // указатель на следующий из предыдущего = текущий 
         //last_node = last_node->next; // last_node = новый
-        last_node->first = (last_node->prev)->last; // начало новой строки - конец предыдущей
-        last_node->last = static_cast<void*>(static_cast<char*>(root->prev->last) + N); // конец строки
-        last_node->next = nullptr; // следующего пока нет
-        return Pointer(last_node);
+        //last_node->first = (last_node->prev)->last; // начало новой строки - конец предыдущей
+        //last_node->last = static_cast<void*>(static_cast<char*>(root->prev->last) + N); // конец строки
+        //last_node->next = nullptr; // следующего пока нет
+        return Pointer(root);
     }
 
     // посмотрим, есть ли место в дырках 
