@@ -104,19 +104,14 @@ TEST(Allocator, AllocNoMem) {
 
 TEST(Allocator, AllocReuse) {
     Allocator a(buf, sizeof(buf));
-
     vector<Pointer> ptrs;
     int size = 135;
-
     ASSERT_TRUE(fillUp(a, size, ptrs));
     a.free(ptrs[1]);
-
     EXPECT_EQ(ptrs[1].get(), nullptr);
     ptrs[1] = a.alloc(size);
-
     EXPECT_NE(ptrs[1].get(), nullptr);
     writeTo(ptrs[1], size);
-
     for (Pointer& p : ptrs) {
         EXPECT_TRUE(isDataOk(p, size));
         a.free(p);

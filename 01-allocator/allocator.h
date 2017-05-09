@@ -21,7 +21,9 @@ public:
      * @param N size_t
      */
     Pointer alloc(size_t N);
-
+    Pointer _alloc_root(size_t N);
+    Pointer _alloc_last_node(size_t N);
+    Pointer _alloc_find_free_place(size_t N);
     /**
      * TODO: semantics
      * @param p Pointer
