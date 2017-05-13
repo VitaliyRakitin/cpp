@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <iostream>
 #include <set>
+#include <cstring>
 
 using namespace std;
 // Forward declaration. Do not include real class definition
@@ -24,6 +25,7 @@ public:
     ~Pointer(){};
 
     void *get() const;
+    point *get_ptr() const;
     size_t get_size();
     void free();
 

@@ -18,6 +18,10 @@ void* Pointer::get() const{
     return ptr->first;
 }
 
+point* Pointer::get_ptr() const{
+    return ptr;
+}
+
 /* узнать размер выделенной памяти */
 size_t Pointer::get_size(){
     if(ptr == nullptr) 
@@ -29,8 +33,10 @@ size_t Pointer::get_size(){
 }
 
 void Pointer:: free(){
+    /*
     if (ptr != nullptr){
-        ptr->last =  ptr->first;
+        ptr->last = ptr->first;
         ptr = nullptr;
     }
+    */
 }
