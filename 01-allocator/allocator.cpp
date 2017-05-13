@@ -23,11 +23,13 @@ Pointer Allocator::_alloc_root(size_t N){
 
 Pointer Allocator::_alloc_last_node(size_t N){
     if (free_points != nullptr){
+        point *new_free_point = free_points->prev;
         free_points->prev = root; // указатель на следующий из предыдущего = текущий 
         free_points->first = root->last; // начало новой строки - конец предыдущей
+        root->next = free_points;
         free_points->last = static_cast<void*>(static_cast<char*>(root->last) + N);
         root = free_points;
-        free_points = free_points->prev;       
+        free_points = new_free_point;       
         root->next = nullptr;
     }
     else{
