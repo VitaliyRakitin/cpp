@@ -5,7 +5,7 @@
 
 Allocator::Allocator(void* base, size_t base_size){
     buff.first = base;
-    buff.last = static_cast<char *>(base) + base_size - sizeof(point) - 3;
+    buff.last = static_cast<char *>(base) + base_size - sizeof(point) ;
     root = static_cast<point *>(buff.last);
     root->prev = nullptr;
     root->next  = nullptr; 
