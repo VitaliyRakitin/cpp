@@ -103,19 +103,14 @@ class Sort{
 		}
 
 		void merge(vector<string> files, int k){
-			vector<vector<int> > buf; // буфер
-			vector<int> len; // оставшиеся длины файлов для чтения
-			vector<int> position; // позиция с которой читать
-			vector<int> sorted; // отсортированный вектор вывода
-			vector<bool> check; // проверка на то, что  считываемый файл закончился
-			vector<size_t> place; // текущее место в буфере для каждого файла
 
-			buf.resize(files.size());  
-			len.resize(files.size());  
-			position.resize(files.size()); 
-			sorted.resize(0);; 
-			check.resize(files.size());
-			place.resize(files.size());
+			vector<vector<int> > buf(files.size()); // буфер
+			vector<int> len(files.size()); // оставшиеся длины файлов для чтения
+			vector<int> position(files.size()); // позиция с которой читать
+			vector<int> sorted(0); // отсортированный вектор вывода
+			vector<bool> check(files.size()); // проверка на то, что  считываемый файл закончился
+			vector<size_t> place(files.size()); // текущее место в буфере для каждого файла
+
 
 			// считываем batсh из каждого файла и определяем начальные значения
 			for (int i=0; i<buf.size(); ++i){
