@@ -5,6 +5,6 @@ arr = np.fromfile('result', dtype=np.int32)
 
 print "length: {0} : {1}".format(len(arr_init),len(arr)) 
 try:
-	print "check: {0} errors".format(np.sum(arr - np.sort(arr_init)!=0)) 
+	print "check: {0} errors".format(np.sum(np.abs(arr - np.sort(arr_init))))
 except:
 	print "wrong lengths"
