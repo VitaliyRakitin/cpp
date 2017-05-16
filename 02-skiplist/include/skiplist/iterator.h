@@ -54,10 +54,10 @@ public:
       return *this;
   };
 
-  virtual Iterator& operator++(int) {//?
-      Iterator<Key, Value>* temp = new Iterator<Key, Value>(*this);
-      ++(*this);
-      return *temp;
+  virtual Iterator& operator++(int num) {//?
+      for (int i = 0; i < num; num++)
+          (*this)++;
+      return *this;
   };
 };
 
