@@ -61,6 +61,13 @@ public:
         assert(pValue != nullptr);
         return *pValue;
     };
+  /**
+   * Returns value assosiated with the given node
+   */
+    virtual void set_value(Value *val) {
+        delete pValue;  
+        pValue = val;
+    };
 
     /**
    * Returns next node in the sequence

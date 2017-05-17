@@ -93,6 +93,15 @@ public:
    */
     virtual Value* Put(const Key& key, const Value& value) const {
       auto before = nearest(key);
+      IndexNode<Key, Value> * next = dynamic_cast<IndexNode<Key,Value>*>(&before[0]->next());
+
+      if (next != pTailIdx && next->key() == key){
+          DataNode<Key, Value> *root =  (dynamic_cast<DataNode<Key,Value>*>(&(dynamic_cast<IndexNode<Key,Value>*>(&before[0]->next()))->root()));
+          Value old_val = root->value();
+          root->set_value(new Value(value));
+          return new Value(old_val);
+      }
+
       Node<Key, Value> *cur= new DataNode<Key, Value>(new Key(key), new Value(value));
       Node<Key, Value> *down = nullptr;
       int h = 0;
@@ -102,7 +111,7 @@ public:
           before[h]->next(p);
           down = dynamic_cast<Node<Key, Value>*>(p);
           h++;
-      }while((h < MAXHEIGHT)&&(rand()%2 - 1));
+      }while((h < MAXHEIGHT)&&(rand()%2));
 
 
     return nullptr;
@@ -151,6 +160,9 @@ public:
   virtual Value* Delete(const Key& key) {
       auto cur = nearest(key);
       while(Get(key)) {
+          DataNode<Key, Value> *root = dynamic_cast<DataNode<Key, Value> *>(&cur[0]->root());
+          delete root;
+
           for (int i = 0; i < MAXHEIGHT; i++) {
               IndexNode<Key, Value> *t = dynamic_cast<IndexNode<Key, Value> *>(&cur[i]->next());
               if ((t != pTailIdx) && (t->key() == key)) {
@@ -166,9 +178,10 @@ public:
    * Same as Get
    */
   virtual const Value* operator[](const Key& key) const {
-      IndexNode<Key, Value>* n = dynamic_cast<IndexNode<Key, Value>*>(&nearest(key)[0]->next());
-      if(n != pTailIdx && n->key() == key)
-          return &n->value();
+      IndexNode<Key, Value>* last = dynamic_cast<IndexNode<Key, Value>*>(&nearest(key)[0]->next());
+      DataNode<Key, Value>* data = dynamic_cast<DataNode<Key, Value>*>(&last->root());
+      if(last != pTailIdx && data->key() == key)
+          return &data->value();
     return nullptr;
   };
 
