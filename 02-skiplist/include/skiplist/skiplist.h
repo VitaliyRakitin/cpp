@@ -11,8 +11,8 @@ using namespace std;
 template<class Key, class Value, size_t MAXHEIGHT, class Compare = std::less<Key>>
 class SkipList {
 private:
-  Node<Key, Value> *pHead;
-  Node<Key, Value> *pTail;
+  DataNode<Key, Value> *pHead;
+  DataNode<Key, Value> *pTail;
 
   IndexNode<Key, Value> *pTailIdx;
   IndexNode<Key, Value> *aHeadIdx[MAXHEIGHT];
@@ -25,6 +25,8 @@ public:
     // задаём DataNode 
     pHead   = new DataNode<Key, Value>(nullptr, nullptr);
     pTail   = new DataNode<Key, Value>(nullptr, nullptr);
+
+    pHead->next(pTail);
 
     // задаём конец, он один
     pTailIdx = new IndexNode<Key, Value>(pTail, pTail);
@@ -102,17 +104,25 @@ public:
           return new Value(old_val);
       }
 
-      Node<Key, Value> *cur= new DataNode<Key, Value>(new Key(key), new Value(value));
-      Node<Key, Value> *down = nullptr;
       int h = 0;
-      do{
+
+      DataNode<Key, Value> *cur= new DataNode<Key, Value>(new Key(key), new Value(value));
+      DataNode<Key, Value> *root = dynamic_cast<DataNode<Key,Value>*>(&before[h]->root());
+      DataNode<Key, Value> *root_next = dynamic_cast<DataNode<Key,Value>*>(&root->next());
+
+      cur->next(root_next);
+      root->next(cur);
+      
+      Node<Key, Value> *down = nullptr;
+
+
+      while((h < MAXHEIGHT)&&(rand()%2)){
           IndexNode<Key, Value> * p = new IndexNode<Key, Value>(down, cur);
           p->next(dynamic_cast<IndexNode<Key,Value>*>(&(before[h]->next())));
           before[h]->next(p);
           down = dynamic_cast<Node<Key, Value>*>(p);
           h++;
-      }while((h < MAXHEIGHT)&&(rand()%2));
-
+      }
 
     return nullptr;
   };
