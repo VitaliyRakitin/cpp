@@ -71,7 +71,8 @@ public:
 
 
   
-  std::vector<IndexNode<Key, Value>*> nearest(Key k) const{
+  std::vector<IndexNode<Key, Value>*> nearest(Key k) const{      
+
       std::vector<IndexNode<Key, Value>*> cur(MAXHEIGHT);
       for(int h = MAXHEIGHT - 1; h >= 0; h--){
           for(cur[h] = aHeadIdx[h];
@@ -80,7 +81,8 @@ public:
               && (cur[h]->next().key() < k));
               cur[h] =  static_cast<IndexNode<Key, Value>*>(&cur[h]->next()))
           if(h - 1 >= 0) cur[h-1] = static_cast<IndexNode<Key, Value>*>(&cur[h]->down());
-      }
+      }      
+
       return cur;
   }
 
@@ -94,21 +96,30 @@ public:
    * @return old value for the given key or nullptr
    */
     virtual Value* Put(const Key& key, const Value& value) const {
-      auto before = nearest(key);
-      IndexNode<Key, Value> * next = dynamic_cast<IndexNode<Key,Value>*>(&before[0]->next());
 
-      if (next != pTailIdx && next->key() == key){
-          DataNode<Key, Value> *root =  (dynamic_cast<DataNode<Key,Value>*>(&(dynamic_cast<IndexNode<Key,Value>*>(&before[0]->next()))->root()));
+
+      auto before = nearest(key);
+      IndexNode<Key, Value> * next = dynamic_cast<IndexNode<Key,Value>*>(&(before[0]->next()));
+    
+      DataNode<Key, Value> *root = dynamic_cast<DataNode<Key,Value>*>(&(before[0]->root()));
+      DataNode<Key, Value> *root_next = dynamic_cast<DataNode<Key,Value>*>(&root->next());
+
+      while ((root_next != pTail) && (root->next().key() <= key)){
+          root = root_next;
+          root_next = dynamic_cast<DataNode<Key,Value>*>(&root->next());
+        }
+
+      if (root != pHead && root->key() == key){
           Value old_val = root->value();
           root->set_value(new Value(value));
           return new Value(old_val);
       }
+    
 
       int h = 0;
 
       DataNode<Key, Value> *cur= new DataNode<Key, Value>(new Key(key), new Value(value));
-      DataNode<Key, Value> *root = dynamic_cast<DataNode<Key,Value>*>(&before[h]->root());
-      DataNode<Key, Value> *root_next = dynamic_cast<DataNode<Key,Value>*>(&root->next());
+
 
       cur->next(root_next);
       root->next(cur);
@@ -168,9 +179,16 @@ public:
    * @return value for the removed key or nullptr
    */
   virtual Value* Delete(const Key& key) {
+
       auto cur = nearest(key);
       while(Get(key)) {
           DataNode<Key, Value> *root = dynamic_cast<DataNode<Key, Value> *>(&cur[0]->root());
+          DataNode<Key, Value> *next = dynamic_cast<DataNode<Key, Value>*>(&root->next());
+
+          while (next != pTail && next->key() <= key){
+              root = next;
+              next = dynamic_cast<DataNode<Key, Value> *>(&(root->next()));
+          }
           delete root;
 
           for (int i = 0; i < MAXHEIGHT; i++) {
@@ -188,11 +206,28 @@ public:
    * Same as Get
    */
   virtual const Value* operator[](const Key& key) const {
-      IndexNode<Key, Value>* last = dynamic_cast<IndexNode<Key, Value>*>(&nearest(key)[0]->next());
+
+      IndexNode<Key, Value>* last = nearest(key)[0];
       DataNode<Key, Value>* data = dynamic_cast<DataNode<Key, Value>*>(&last->root());
-      if(last != pTailIdx && data->key() == key)
-          return &data->value();
-    return nullptr;
+
+      if (data != pTail){
+
+          DataNode<Key, Value>* next = dynamic_cast<DataNode<Key, Value>*>(&data->next());    
+
+          while ((next != pTail)&&(data->next().key() <= key)){
+              data = next;
+              next = dynamic_cast<DataNode<Key, Value>*>(&data->next());
+          }
+
+
+          if(data != pHead && data->key() == key){
+
+              return &data->value();
+          }
+      }    
+
+
+      return nullptr;
   };
 
   /**
